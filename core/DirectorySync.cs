@@ -3,9 +3,9 @@ using System.IO;
 using System.Security.Permissions;
 
 
-namespace DirectorySync
+namespace SkyDS
 {
-    public class DirectorySync
+    public class dsCLI
     {
         private static string remoteDirectory;
 
@@ -47,14 +47,14 @@ namespace DirectorySync
             // Add event handlers
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             watcher.Created += new FileSystemEventHandler(OnChanged);
-            watcher.Deleted += new FileSystemEventHandler(OnChanged);
+            watcher.Deleted += new FileSystemEventHandler(OnDeleted);
             watcher.Renamed += new RenamedEventHandler(OnRenamed);
 
             // Begin watching
             watcher.EnableRaisingEvents = true;
 
             // Wait for the user to quit the program
-            Console.WriteLine("Press \'q\' to quit the sample.");
+            Console.WriteLine("Press \'q\' to quit Sky Directory Sync (SkyDS).");
             while (Console.Read() != 'q') ;
         }
 
@@ -62,19 +62,38 @@ namespace DirectorySync
         private static void OnChanged(object source, FileSystemEventArgs e)
         {
             // Specify what is done when a file is changed, created, or deleted
-            Console.WriteLine("File: " + e.FullPath + " " + e.ChangeType);
+            Console.WriteLine("\nFile: " + e.FullPath + " " + e.ChangeType);
             var directoryComponents = e.FullPath.Split('\\');
             var fileName = directoryComponents[directoryComponents.Length - 1];
             var remoteFullPath = remoteDirectory + fileName;
-            Console.WriteLine("Remote file destination is: ", remoteFullPath);
+            Console.WriteLine("Remote file destination is: " + remoteFullPath);
 
-            //File.Copy(e.FullPath, remoteFullPath, true);
+            File.Copy(e.FullPath, remoteFullPath, true);
+        }
+
+        private static void OnDeleted(object source, FileSystemEventArgs e)
+        {
+            // Specify what is done when a file is changed, created, or deleted
+            Console.WriteLine("\nFile: " + e.FullPath + " " + e.ChangeType);
+            var directoryComponents = e.FullPath.Split('\\');
+            var fileName = directoryComponents[directoryComponents.Length - 1];
+            var remoteFullPath = remoteDirectory + fileName;
+            Console.WriteLine("Remote file destination is: " + remoteFullPath);
+
+            File.Delete(remoteFullPath);
         }
 
         private static void OnRenamed(object source, RenamedEventArgs e)
         {
             // Specify what is done when a file is renamed
             Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
+            var newDirectoryComponents = e.FullPath.Split('\\');
+            var newFileName = newDirectoryComponents[newDirectoryComponents.Length - 1];
+            var oldDirectoryComponents = e.OldFullPath.Split('\\');
+            var oldFileName = oldDirectoryComponents[oldDirectoryComponents.Length - 1];
+
+            File.Delete(remoteDirectory + oldFileName);
+            File.Copy(e.FullPath, remoteDirectory + newFileName, true);
         }
     }
 }

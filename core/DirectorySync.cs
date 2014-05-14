@@ -20,17 +20,17 @@ namespace SkyDS
             string[] args = System.Environment.GetCommandLineArgs();
 
             // Validate the proper arguments were provided
-            if (args.Length != 3)
+            if (args.Length != 4)
             {
                 // Display the proper way to call the program.
-                Console.WriteLine("Usage: SkyCpCLI.exe (directory) (remote machine name)");
+                Console.WriteLine("Usage: SkyDS.exe (Directory of DLL) (DLL file name) (remote machine name)");
                 return;
             }
 
             // construct the full path for the remote location
             var versionNum = "17.500.7707.2003";
-            remoteDirectory = "\\\\" + args[2] + "\\ServicesFE\\SkyWeb\\" + versionNum + "\\web\\bin\\";
-            Console.WriteLine("Watching directory: " + args[1]);
+            remoteDirectory = "\\\\" + args[3] + "\\ServicesFE\\SkyWeb\\" + versionNum + "\\web\\bin\\";
+            Console.WriteLine("Watching file: " + args[1] + args[2]);
             Console.WriteLine("Copying to directory: " + remoteDirectory);
 
             // Initialize the file watcher
@@ -42,7 +42,7 @@ namespace SkyDS
                                    | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 
             // Only watch DLL files.
-            //watcher.Filter = "*.txt";
+            watcher.Filter = args[2];
 
             // Add event handlers
             watcher.Changed += new FileSystemEventHandler(OnChanged);
@@ -62,23 +62,36 @@ namespace SkyDS
         private static void OnChanged(object source, FileSystemEventArgs e)
         {
             // Specify what is done when a file is changed, created, or deleted
-            Console.WriteLine("\nFile: " + e.FullPath + " " + e.ChangeType);
             var directoryComponents = e.FullPath.Split('\\');
             var fileName = directoryComponents[directoryComponents.Length - 1];
             var remoteFullPath = remoteDirectory + fileName;
-            Console.WriteLine("Remote file destination is: " + remoteFullPath);
 
-            File.Copy(e.FullPath, remoteFullPath, true);
+            var finished = false;
+            while (!finished)
+            {
+                try
+                {
+                    File.Copy(e.FullPath, remoteFullPath, true);
+                    finished = true;
+                }
+
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+            printChangeEvent(fileName, e.ChangeType.ToString(), remoteFullPath);
         }
 
         private static void OnDeleted(object source, FileSystemEventArgs e)
         {
             // Specify what is done when a file is changed, created, or deleted
-            Console.WriteLine("\nFile: " + e.FullPath + " " + e.ChangeType);
             var directoryComponents = e.FullPath.Split('\\');
             var fileName = directoryComponents[directoryComponents.Length - 1];
             var remoteFullPath = remoteDirectory + fileName;
-            Console.WriteLine("Remote file destination is: " + remoteFullPath);
+
+            printChangeEvent(fileName, e.ChangeType.ToString(), remoteFullPath);
 
             File.Delete(remoteFullPath);
         }
@@ -86,14 +99,23 @@ namespace SkyDS
         private static void OnRenamed(object source, RenamedEventArgs e)
         {
             // Specify what is done when a file is renamed
-            Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
             var newDirectoryComponents = e.FullPath.Split('\\');
             var newFileName = newDirectoryComponents[newDirectoryComponents.Length - 1];
             var oldDirectoryComponents = e.OldFullPath.Split('\\');
             var oldFileName = oldDirectoryComponents[oldDirectoryComponents.Length - 1];
 
+            Console.WriteLine("File: {0} renamed to {1}", e.OldFullPath, e.FullPath);
             File.Delete(remoteDirectory + oldFileName);
             File.Copy(e.FullPath, remoteDirectory + newFileName, true);
+        }
+
+        private static void printChangeEvent(string filename, string eventType, string remoteFullPath)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n-- " + eventType + " --------------------------------");
+            Console.ResetColor();
+            Console.WriteLine(filename);
+            Console.WriteLine("Remote file destination is: " + remoteFullPath);
         }
     }
 }

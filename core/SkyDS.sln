@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyDSCmdLine", "SkyDSCmdLine.csproj", "{0FBF3859-1535-4B73-945C-8847A28FB4BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkyDS", "..\SkyDS\SkyDS.csproj", "{7B686C1C-3063-4D97-AE9A-983C90BF7238}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0FBF3859-1535-4B73-945C-8847A28FB4BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FBF3859-1535-4B73-945C-8847A28FB4BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FBF3859-1535-4B73-945C-8847A28FB4BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FBF3859-1535-4B73-945C-8847A28FB4BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B686C1C-3063-4D97-AE9A-983C90BF7238}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B686C1C-3063-4D97-AE9A-983C90BF7238}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B686C1C-3063-4D97-AE9A-983C90BF7238}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B686C1C-3063-4D97-AE9A-983C90BF7238}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

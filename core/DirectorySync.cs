@@ -5,7 +5,7 @@ using System.Security.Permissions;
 
 namespace SkyDS
 {
-    public class dsCLI
+    public class SkyDS
     {
         private static string remoteDirectory;
 
@@ -34,28 +34,39 @@ namespace SkyDS
             Console.WriteLine("Copying to directory: " + remoteDirectory);
 
             // Initialize the file watcher
-            var watcher = new FileSystemWatcher(args[1]);
+            var dllWatcher = new FileSystemWatcher(args[1]);
+            var pdbWatcher = new FileSystemWatcher(args[1]);
 
             /* Watch for changes in LastAccess and LastWrite times
              * and the renaming of files or directories. */
-            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+            dllWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+                                   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            pdbWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
                                    | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 
             // Only watch DLL files.
-            watcher.Filter = args[2];
+            dllWatcher.Filter = args[2] + ".dll";
+            pdbWatcher.Filter = args[2] + ".pdb";
+            Console.WriteLine("DLL filter: " + dllWatcher.Filter);
+            Console.WriteLine("PDB filter: " + pdbWatcher.Filter);
 
             // Add event handlers
-            watcher.Changed += new FileSystemEventHandler(OnChanged);
-            watcher.Created += new FileSystemEventHandler(OnChanged);
-            watcher.Deleted += new FileSystemEventHandler(OnDeleted);
-            watcher.Renamed += new RenamedEventHandler(OnRenamed);
+            dllWatcher.Changed += OnChanged;
+            dllWatcher.Created += OnChanged;
+            dllWatcher.Deleted += OnDeleted;
+            dllWatcher.Renamed += OnRenamed;
+            pdbWatcher.Changed += OnChanged;
+            pdbWatcher.Created += OnChanged;
+            pdbWatcher.Deleted += OnDeleted;
+            pdbWatcher.Renamed += OnRenamed;
 
             // Begin watching
-            watcher.EnableRaisingEvents = true;
+            dllWatcher.EnableRaisingEvents = true;
+            pdbWatcher.EnableRaisingEvents = true;
 
             // Wait for the user to quit the program
             Console.WriteLine("Press \'q\' to quit Sky Directory Sync (SkyDS).");
-            while (Console.Read() != 'q') ;
+            while (Console.Read() != 'q');
         }
 
         // Define the event handlers
@@ -86,7 +97,6 @@ namespace SkyDS
 
         private static void OnDeleted(object source, FileSystemEventArgs e)
         {
-            // Specify what is done when a file is changed, created, or deleted
             var directoryComponents = e.FullPath.Split('\\');
             var fileName = directoryComponents[directoryComponents.Length - 1];
             var remoteFullPath = remoteDirectory + fileName;
@@ -98,7 +108,6 @@ namespace SkyDS
 
         private static void OnRenamed(object source, RenamedEventArgs e)
         {
-            // Specify what is done when a file is renamed
             var newDirectoryComponents = e.FullPath.Split('\\');
             var newFileName = newDirectoryComponents[newDirectoryComponents.Length - 1];
             var oldDirectoryComponents = e.OldFullPath.Split('\\');

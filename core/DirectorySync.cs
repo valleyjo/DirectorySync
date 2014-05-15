@@ -66,7 +66,9 @@ namespace SkyDS
 
             // Wait for the user to quit the program
             Console.WriteLine("Press \'q\' to quit Sky Directory Sync (SkyDS).");
-            while (Console.Read() != 'q');
+            while (Console.Read() != 'q')
+            {
+            }
         }
 
         // Define the event handlers

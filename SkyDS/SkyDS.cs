@@ -74,38 +74,36 @@ namespace SkyDS
 
         }
 
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            // Pass the argument directly back to the RunWorkerCompleted method
-            e.Result = e.Argument;
-        }
-
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            var activityText = (ActivityText)e.Result;
-            activityArea.ForeColor = activityText.Color;
-            activityArea.AppendText(Environment.NewLine + Environment.NewLine + "--- " + activityText.Header + " ------------------------");
-            activityArea.ForeColor = Color.Black;
-            activityArea.AppendText(Environment.NewLine + activityText.Msg);
-        }
-
         private void remoteMachineName_TextChanged(object sender, EventArgs e)
         {
             var versionNum = "17.500.7707.2003";
             remoteDirectory = "\\\\" + remoteMachineName.Text + "\\ServicesFE\\SkyWeb\\" + versionNum + "\\web\\bin\\";
-            PrintActivity("Remote machine changed", Color.Green, "Copying to directory: " + remoteDirectory);
         }
 
-        private void PrintActivity(string heading, Color color, string activity)
+        private void PrintActivity(string header, Color color, string msg)
         {
-                var bw = new BackgroundWorker();
-                bw.DoWork += backgroundWorker_DoWork;
-                bw.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
-                bw.RunWorkerAsync(new ActivityText(heading, color, activity));
+            PrintActivity(new ActivityText(header, color, msg));
+        }
+
+        private void PrintActivity(ActivityText text)
+        {
+            if (activityArea.InvokeRequired)
+            {
+                activityArea.Invoke(new Action<ActivityText>(PrintActivity), text);
+            }
+            else
+            {
+                this.activityArea.ForeColor = text.Color;
+                this.activityArea.AppendText(Environment.NewLine + Environment.NewLine + "----- " + text.Header + "-----------------------------");
+                this.activityArea.ForeColor = Color.Black;
+                this.activityArea.AppendText(Environment.NewLine + text.Msg);
+            }
         }
 
         private void beginWatch_Click(object sender, EventArgs e)
         {
+            PrintActivity("Copying to directory", Color.Green, "Copying to directory: " + remoteDirectory);
+
             foreach (FileSystemWatcher watcher in watchers.Values)
             {
                 watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite

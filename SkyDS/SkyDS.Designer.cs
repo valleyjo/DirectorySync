@@ -31,7 +31,6 @@
             this.beginWatch = new System.Windows.Forms.Button();
             this.endWatch = new System.Windows.Forms.Button();
             this.choseFilesToSync = new System.Windows.Forms.Button();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.activityLabel = new System.Windows.Forms.Label();
             this.activityArea = new System.Windows.Forms.TextBox();
             this.remoteMachineName = new System.Windows.Forms.TextBox();
@@ -67,10 +66,6 @@
             this.choseFilesToSync.Text = "Choose Files to Sync";
             this.choseFilesToSync.UseVisualStyleBackColor = true;
             this.choseFilesToSync.Click += new System.EventHandler(this.chooseFilesToSync_Click);
-            // 
-            // backgroundWorker
-            // 
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
             // 
             // activityLabel
             // 
@@ -137,7 +132,6 @@
         private System.Windows.Forms.Button beginWatch;
         private System.Windows.Forms.Button endWatch;
         private System.Windows.Forms.Button choseFilesToSync;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.Label activityLabel;
         private System.Windows.Forms.TextBox activityArea;
         private System.Windows.Forms.TextBox remoteMachineName;

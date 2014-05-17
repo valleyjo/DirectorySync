@@ -138,4 +138,3 @@
         private System.Windows.Forms.Label remoteMachineLabel;
     }
 }
-

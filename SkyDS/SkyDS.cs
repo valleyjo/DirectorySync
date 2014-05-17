@@ -11,19 +11,6 @@ using System.IO;
 
 namespace SkyDS
 {
-    public class ActivityText
-    {
-        public Color Color { get; set; }
-        public string Header { get; set; }
-        public string Msg { get; set; }
-
-        public ActivityText(string header, Color color, string msg)
-        {
-            this.Header = header;
-            this.Color = color;
-            this.Msg = msg;
-        }
-    }
 
     public partial class SkyDS : Form
     {
@@ -167,6 +154,20 @@ namespace SkyDS
             File.Copy(e.FullPath, remoteDirectory + newFileName, true);
 
             PrintActivity(e.ChangeType.ToString(), Color.Green, rename);
+        }
+    }
+
+    public class ActivityText
+    {
+        public Color Color { get; set; }
+        public string Header { get; set; }
+        public string Msg { get; set; }
+
+        public ActivityText(string header, Color color, string msg)
+        {
+            this.Header = header;
+            this.Color = color;
+            this.Msg = msg;
         }
     }
 }

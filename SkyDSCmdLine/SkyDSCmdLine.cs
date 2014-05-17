@@ -2,10 +2,9 @@
 using System.IO;
 using System.Security.Permissions;
 
-
 namespace SkyDS
 {
-    public class SkyDS
+    public class SkyDSCmdLine
     {
         private static string remoteDirectory;
 
